@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chi tiết Đơn hàng - MoonCake Delight</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="../assets/css/admin_style.css" />
+  </head>
+  <body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-wrap">
+                <div class="logo-img">
+                    <i class="fas fa-moon" style="font-size: 2rem; color: var(--brand-crimson);"></i>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-start">
+                    <div style="font-weight:800;color:#fff;font-size:1rem">MORICO</div>
+                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.92)">Bánh Trung Thu</div>
+                </div>
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-section">
+                <div class="nav-title">Bảng điều khiển</div>
+                <a href="dashboard.html"><i class="fas fa-home"></i><span>Trang chủ</span></a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-title">Quản lý</div>
+                <a href="users.html"><i class="fas fa-users"></i><span>Người dùng</span></a>
+                <a href="categories.html"><i class="fas fa-tags"></i><span>Loại sản phẩm</span></a>
+                <a href="products.html"><i class="fas fa-box"></i><span>Sản phẩm</span></a>
+                <a href="purchase-orders.html"><i class="fas fa-truck-loading"></i><span>Nhập hàng</span></a>
+                <a href="pricing.html"><i class="fas fa-dollar-sign"></i><span>Quản lý giá</span></a>
+                <a href="orders.html" class="active"><i class="fas fa-shopping-cart"></i><span>Đơn hàng</span></a>
+                <a href="inventory.html"><i class="fas fa-warehouse"></i><span>Tồn kho</span></a>
+                
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="main-header">
+            <h1 id="order-title"><i class="fas fa-info-circle"></i> Chi tiết Đơn hàng #DH001</h1>
+            <div class="header-actions">
+                <a href="orders.html" class="btn-secondary" style="font-weight: 600;"><i class="fas fa-arrow-left"></i> Quay lại</a>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user" style="font-size: 1.2rem; color: var(--brand-crimson);"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="header-username">Người dùng</div>
+                        <div class="user-role" id="header-role">Quản lý</div>
+                    </div>
+                    <button class="logout-btn" id="logout-btn">Đăng xuất</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:flex; gap: 20px;">
+          <div style="flex: 2;">
+            <div class="card">
+              <div class="card-header"><h2><i class="fas fa-box-open"></i> Sản phẩm</h2></div>
+              <div style="overflow-x: auto;">
+                <table style="width: 100%;">
+                  <thead>
+                    <tr>
+                      <th>Sản phẩm</th>
+                      <th style="text-align:center;">Số lượng</th>
+                      <th style="text-align:right;">Đơn giá</th>
+                      <th style="text-align:right;">Thành tiền</th>
+                    </tr>
+                  </thead>
+                  <tbody id="product-items-table">
+                    <tr>
+                      <td>Bánh nướng thập cẩm</td>
+                      <td style="text-align:center;">3</td>
+                      <td style="text-align:right;">65,000đ</td>
+                      <td style="text-align:right;">195,000đ</td>
+                    </tr>
+                    <tr>
+                      <td>Bánh dẻo hạt sen</td>
+                      <td style="text-align:center;">2</td>
+                      <td style="text-align:right;">60,000đ</td>
+                      <td style="text-align:right;">120,000đ</td>
+                    </tr>
+                    <tr>
+                      <td>Bánh nướng đậu xanh</td>
+                      <td style="text-align:center;">1</td>
+                      <td style="text-align:right;">55,000đ</td>
+                      <td style="text-align:right;">55,000đ</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <hr style="margin: 1.5rem 0; border-top: 1px solid rgba(93,64,55,0.06);"/>
+                <div style="display: flex; justify-content: flex-end;">
+                  <div style="width: 50%;">
+                    <div id="order-summary" style="padding: 10px;">
+                      <div style="display:flex; justify-content:space-between; margin-bottom: 8px; color: var(--muted-brown);">
+                        <span>Tạm tính</span>
+                        <span id="summary-subtotal">370,000đ</span>
+                      </div>
+                      <div style="display:flex; justify-content:space-between; margin-bottom: 8px; color: var(--muted-brown);">
+                        <span>Phí vận chuyển</span>
+                        <span id="summary-shipping">30,000đ</span>
+                      </div>
+                      <div style="display:flex; justify-content:space-between; margin-bottom: 8px; color: #D32F2F;">
+                        <span>Giảm giá</span>
+                        <span id="summary-discount">-50,000đ</span>
+                      </div>
+                      <hr style="margin: 1rem 0;"/>
+                      <div style="display:flex; justify-content:space-between; font-size: 1.2rem; font-weight: bold;">
+                        <strong>Tổng cộng</strong>
+                        <strong id="summary-total">350,000đ</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex: 1;">
+            <div class="card mb-4">
+              <div class="card-header"><h2><i class="fas fa-user-circle"></i> Khách hàng</h2></div>
+              <div style="padding: 1.5rem;" id="customer-info">
+                <strong>Nguyễn Văn A</strong>
+                <p style="margin: 5px 0;">nguyenvana@email.com</p>
+                <p style="margin: 0;">0123456789</p>
+                <hr style="margin: 1rem 0;"/>
+                <strong>Địa chỉ giao hàng</strong>
+                <p style="margin: 5px 0;">123 Đường ABC, Phường 1, Quận 1, TP.HCM</p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h2><i class="fas fa-sync-alt"></i> Cập nhật trạng thái</h2>
+              </div>
+              <div style="padding: 1.5rem;">
+                <form id="orderDetailForm" onsubmit="updateOrderStatus(event)">
+                  <div class="form-group">
+                    <label for="order-status">Trạng thái</label>
+                    <select class="form-control" id="order-status">
+                      <option value="pending">Chờ xử lý</option>
+                      <option value="processed">Đã xử lý</option>
+                      <option value="delivered" selected>Đã giao</option>
+                      <option value="cancelled">Đã hủy</option>
+                    </select>
+                  </div>
+                  <div style="margin-top: 15px;">
+                    <button type="submit" class="btn-primary" style="width: 100%;"><i class="fas fa-check"></i> Cập nhật</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">
+            <p>© 2023 Hệ thống Quản lý Bánh Trung Thu MORICO | Phiên bản 2.1.0</p>
+        </div>
+    </main>
+    <script src="../assets/js/admin_actions.js"></script>
+  </body>
+</html>

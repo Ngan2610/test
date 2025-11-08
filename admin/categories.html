@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý Loại Sản phẩm</title>
+
+    <link rel="stylesheet" href="../bootstrap-5.3.2-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/admin_style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+      /* Thêm CSS cho nút hành động */
+      .form-actions .btn { margin-left: 5px; }
+      .table .btn { margin-right: 5px; margin-bottom: 5px; }
+
+      /* Responsive cho thiết bị di động (max-width: 768px) */
+      @media (max-width: 768px) {
+          body { display: flex !important; flex-direction: column !important; overflow-x: hidden; }
+          .sidebar { width: 100% !important; height: auto !important; flex-shrink: 0; display: flex !important; overflow-x: auto; white-space: nowrap; }
+          .main-content { width: 100%; min-width: auto; }
+          .page-content { padding: 15px !important; }
+          /* Đảm bảo bảng có thể cuộn ngang trên di động */
+          .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      }
+    </style>
+  </head>
+  <body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-wrap">
+                <div class="logo-img">
+                    <i class="fas fa-moon" style="font-size: 2rem; color: var(--brand-crimson);"></i>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-start">
+                    <div style="font-weight:800;color:#fff;font-size:1rem">MORICO</div>
+                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.92)">Bánh Trung Thu</div>
+                </div>
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-section">
+                <div class="nav-title">Bảng điều khiển</div>
+                <a href="dashboard.html"><i class="fas fa-home"></i><span>Trang chủ</span></a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-title">Quản lý</div>
+                <a href="users.html"><i class="fas fa-users"></i><span>Người dùng</span></a>
+                <a href="categories.html" class="active"><i class="fas fa-tags"></i><span>Loại sản phẩm</span></a>
+                <a href="products.html"><i class="fas fa-box"></i><span>Sản phẩm</span></a>
+                <a href="purchase-orders.html"><i class="fas fa-truck-loading"></i><span>Nhập hàng</span></a>
+                <a href="pricing.html"><i class="fas fa-dollar-sign"></i><span>Quản lý giá</span></a>
+                <a href="orders.html"><i class="fas fa-shopping-cart"></i><span>Đơn hàng</span></a>
+                <a href="inventory.html"><i class="fas fa-warehouse"></i><span>Tồn kho</span></a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="main-header">
+            <h1><i class="fas fa-tags"></i> Quản Lý Loại Sản Phẩm</h1>
+            <div class="header-actions">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user" style="font-size: 1.2rem; color: var(--brand-crimson);"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="header-username">Người dùng</div>
+                        <div class="user-role" id="header-role">Quản lý</div>
+                    </div>
+                    <button class="logout-btn" id="logout-btn">Đăng xuất</button>
+                </div>
+            </div>
+        </div>
+
+      <div class="page-content container-fluid">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="h5 mb-0" id="category-form-title"><i class="fas fa-plus-circle"></i> Thêm loại mới</h3>
+              </div>
+              <form id="categoryForm" onsubmit="saveCategoryHandler(event)" class="card-body">
+                <div class="mb-3">
+                  <label for="category-name" class="form-label">Tên loại sản phẩm</label>
+                  <input type="text" class="form-control" id="category-name" required placeholder="Ví dụ: Bánh dẻo, Bánh nướng 1 trứng,..." />
+                </div>
+                <div class="form-actions text-end">
+                  <button type="button" class="btn btn-secondary" onclick="resetCategoryForm()">Hủy</button> 
+                  <button type="submit" class="btn btn-primary ms-2">Lưu</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="col-md-8">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="h5 mb-0"><i class="fas fa-list"></i> Danh sách loại sản phẩm</h3>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Tên loại</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                      </tr>
+                    </thead>
+                    <tbody id="categoryTableBody">
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <p>© 2023 Hệ thống Quản lý MORICO | Phiên bản 2.1.0</p>
+      </div>
+    </main>
+
+    <script src="../bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/product.js"></script> 
+    <script src="../assets/js/admin_actions.js"></script>
+    
+    <script>
+      /** Khởi tạo tất cả chức năng khi trang load */
+      document.addEventListener("DOMContentLoaded", function() {
+        // 1. Khởi tạo dữ liệu mẫu nếu chưa có
+        if (typeof initializeSampleProducts === 'function') {
+            initializeSampleProducts(); 
+        }
+        if (typeof initializeSampleCategories === 'function') {
+            initializeSampleCategories();
+        }
+
+        // 2. Gắn sự kiện Logout cho nút (Đảm bảo handleLogout có sẵn từ admin_actions.js)
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn && typeof handleLogout === 'function') {
+            logoutBtn.addEventListener('click', handleLogout);
+        }
+        
+        // 3. Render bảng category (Đảm bảo renderCategories có sẵn từ admin_actions.js)
+        if (typeof renderCategories === 'function') {
+            renderCategories();
+        }
+        
+        // Tùy chọn: Load tên người dùng nếu có
+        const usernameEl = document.getElementById('header-username');
+        const userRoleEl = document.getElementById('header-role');
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        if (loggedInUser && usernameEl) {
+            usernameEl.textContent = loggedInUser.charAt(0).toUpperCase() + loggedInUser.slice(1);
+        }
+      });
+    </script>
+  </body>
+</html>

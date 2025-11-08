@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Quản Lý Sản Phẩm & Nhập Hàng</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        :root{
+            --brand-gold: #E6BE8A;
+            --brand-crimson: #8B0000;
+            --bg-cream: #FFF8E7;
+            --muted-brown: #5D4037;
+            --card-white: #ffffff;
+            --accent-shadow: rgba(139,0,0,0.12);
+        }
+        
+        *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif}
+        html,body{height:100%}
+        body{
+            background: linear-gradient(180deg, var(--bg-cream) 0%, #FFF8F0 100%);
+            color: var(--brand-crimson);
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+        }
+
+        .sidebar{
+            width:280px;position:fixed;top:0;left:0;height:100vh;
+            background: linear-gradient(135deg, var(--brand-gold) 0%, #D9A86B 100%);
+            color: rgba(255,255,255,0.95);box-shadow: 0 0.15rem 1.75rem var(--accent-shadow);z-index:1000;overflow:auto;
+        }
+        .sidebar-header{padding:1.6rem 1rem;text-align:center;border-bottom:1px solid rgba(255,255,255,0.12);}
+        .logo-wrap{display:flex;align-items:center;justify-content:center;gap:0.8rem;}
+        .logo-img{width:72px;height:72px;border-radius:12px;background: rgba(255,255,255,0.9);padding:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,0.08);}
+        .nav-menu{padding:1rem 0;margin-top:8px}
+        .nav-title{padding:0 1.4rem;margin-bottom:0.4rem;font-size:0.75rem;text-transform:uppercase;opacity:0.85;color:rgba(255,255,255,0.9);font-weight:700}
+        .nav-menu a{display:flex;align-items:center;padding:0.8rem 1.4rem;color:rgba(255,255,255,0.96);text-decoration:none;border-left:3px solid transparent;transition:all .18s}
+        .nav-menu a i{width:22px;text-align:center;margin-right:12px;font-size:1.05rem}
+        .nav-menu a:hover, .nav-menu a.active{background:rgba(255,255,255,0.12);border-left-color:#fff;color:#fff}
+        .nav-menu a span{font-weight:600}
+        .main-content{margin-left:280px;padding:2rem;background:transparent;min-height:100vh;}
+        .main-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(93,64,55,0.06)}
+        .main-header h1{font-size:2rem;font-weight:800;color:var(--brand-crimson);display:flex;align-items:center;gap:12px}
+        .main-header h1 i{color:var(--brand-gold);font-size:1.6rem}
+        .header-actions{display:flex;align-items:center;gap:1rem}
+        .search-box{position:relative}
+        .search-box input{padding:0.64rem 1rem 0.64rem 2.6rem;border-radius:50px;border:1px solid rgba(0,0,0,0.06);width:250px;background:var(--card-white);color:var(--brand-crimson)}
+        .search-box i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted-brown)}
+        .user-info{display:flex;align-items:center;gap:10px;padding:0.45rem 0.8rem;background:var(--card-white);border-radius:50px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+        .user-details .user-name{font-weight:700;color:var(--brand-crimson)}
+        .user-role{font-size:0.78rem;color:var(--muted-brown)}
+        .logout-btn {background-color: var(--brand-crimson);color: white;border: none;padding: 8px 15px;border-radius: 20px;cursor: pointer;font-weight: 500;margin-left: 15px;transition: background-color 0.3s;}
+        .logout-btn:hover {background-color: #6a0000;}
+        .footer{text-align:center;padding:1.4rem;color:var(--muted-brown);font-size:0.88rem;border-top:1px solid rgba(93,64,55,0.06);margin-top:1.6rem}
+
+        /* Card và table styles */
+        .card {background:var(--card-white);border-radius:12px;padding:1.5rem;border-top:4px solid var(--brand-gold);box-shadow:0 10px 30px rgba(92,64,55,0.06);margin-bottom:1.6rem;}
+        .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding-bottom:0.6rem;border-bottom:1px solid rgba(93,64,55,0.06)}
+        .card-header h2{font-size:1.5rem;font-weight:800;color:var(--brand-crimson);display:flex;align-items:center;gap:10px}
+        .card-header h2 i{color:var(--brand-gold)}
+
+        .btn-primary {
+            background-color: var(--brand-crimson);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary:hover {
+            background-color: #6a0000;
+        }
+
+        .btn-add {
+            background: #4CAF50;
+        }
+        
+        .btn-add:hover {
+            background: #388E3C;
+        }
+
+        table{width:100%;border-collapse:collapse;font-size:0.95rem}
+        table th, table td{padding:0.8rem;text-align:left;border-bottom:1px solid rgba(93,64,55,0.06)}
+        table th{font-weight:800;color:var(--muted-brown);font-size:0.78rem;text-transform:uppercase;background:rgba(230,190,138,0.1)}
+
+        .action-group{display:flex;gap:5px}
+        .action-group button{padding:6px 10px;border:1px solid #ccc;border-radius:6px;cursor:pointer;font-size:0.9rem;font-weight:600;transition:all 0.2s;display:inline-flex;align-items:center;gap:5px}
+
+        .btn-edit{background:#FFC107;color:#5D4037;border-color:#FFC107}
+        .btn-edit:hover{background:#e0a800;border-color:#e0a800}
+        .btn-hide{background:#FFEBEE;color:var(--brand-crimson);border-color:var(--brand-crimson)}
+        .btn-hide:hover{background:#f8d7da}
+        .btn-show{background:#E8F5E9;color:#2E7D32;border-color:#2E7D32}
+        .btn-show:hover{background:#d4edda}
+        .btn-delete{background:#D32F2F;color:#fff;border-color:#D32F2F}
+        .btn-delete:hover{background:#c62828;border-color:#c62828}
+
+        /* CHỈNH SỬA: Chỉ còn 2 trạng thái tồn kho */
+        .status{padding:0.35rem 0.7rem;border-radius:50px;font-weight:700;font-size:0.78rem}
+        .status.in-stock{background:#E8F5E9;color:#2E7D32}
+        .status.out-of-stock{background:#FFEBEE;color:#C62828}
+        .status.low-stock{background:#FFF3E0;color:#EF6C00}
+        .status.hidden{background:#9E9E9E;color:#fff}
+        .status-draft{background:#FFF3E0;color:#EF6C00;padding:0.35rem 0.7rem;border-radius:50px;font-weight:700;font-size:0.78rem}
+        .status-completed{background:#E8F5E9;color:#2E7D32;padding:0.35rem 0.7rem;border-radius:50px;font-weight:700;font-size:0.78rem}
+
+        /* Modal styles */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1001; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4); 
+            justify-content: center; 
+            align-items: center;
+        }
+        .modal-content {
+            background-color: var(--card-white); 
+            margin: auto; 
+            padding: 30px; 
+            border-radius: 12px;
+            width: 90%; 
+            max-width: 800px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            color: var(--brand-crimson);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid rgba(93,64,55,0.06)}
+        .modal-header h3{font-size:1.5rem;font-weight:800;color:var(--brand-crimson);margin:0}
+        .close-btn{font-size:1.5rem;cursor:pointer;color:var(--muted-brown)}
+        
+        /* Form styles */
+        .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+        .form-group{margin-bottom:1rem}
+        .form-group label{display:block;margin-bottom:0.4rem;font-weight:600;color:var(--muted-brown)}
+        .form-group input, .form-group select, .form-group textarea{width:100%;padding:0.6rem 1rem;border:1px solid rgba(0,0,0,0.1);border-radius:8px;font-size:1rem}
+        .form-group.full-width{grid-column:1/-1}
+        .modal-buttons{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+        
+        /* Import styles */
+        .import-section{margin-bottom:1.5rem;padding:1rem;background:#f8f9fa;border-radius:8px}
+        .search-product{display:flex;gap:10px;margin-bottom:1rem}
+        .search-product input{flex:1}
+        .product-list{max-height:200px;overflow-y:auto;border:1px solid #ddd;border-radius:8px;padding:0.5rem}
+        .product-item{padding:0.5rem;border-bottom:1px solid #eee;cursor:pointer}
+        .product-item:hover{background:#e9ecef}
+        .product-item.selected{background:var(--brand-gold);color:var(--brand-crimson)}
+        .import-table{width:100%;border-collapse:collapse;margin-top:1rem}
+        .import-table th, .import-table td{padding:0.8rem;text-align:left;border-bottom:1px solid #ddd}
+        .import-table th{background:rgba(230,190,138,0.2)}
+        .quantity-input{width:80px;padding:0.3rem;text-align:center}
+
+        /* Category management styles */
+        .category-stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .category-stat-card {
+            background: var(--card-white);
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid var(--brand-gold);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            flex: 1;
+            min-width: 200px;
+        }
+        .category-stat-card h4 {
+            color: var(--muted-brown);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        .category-stat-card .count {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--brand-crimson);
+        }
+        .category-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        @media(max-width:768px){
+            .sidebar{width:72px}
+            .sidebar .nav-title,.nav-menu a span{display:none}
+            .nav-menu a{justify-content:center;padding:1rem 0.5rem}
+            .main-content{margin-left:72px;padding:1rem}
+            .search-box input{width:160px}
+            .form-grid{grid-template-columns:1fr}
+            .category-stats{flex-direction:column}
+        }
+        @media(max-width:576px){
+            .search-box{display:none}
+            .user-details{display:none}
+        }
+    </style>
+</head>
+<body>
+   <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-wrap">
+                <div class="logo-img">
+                    <i class="fas fa-moon" style="font-size: 2rem; color: var(--brand-crimson);"></i>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-start">
+                    <div style="font-weight:800;color:#fff;font-size:1rem">MORICO</div>
+                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.92)">Bánh Trung Thu</div>
+                </div>
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-section">
+                <div class="nav-title">Bảng điều khiển</div>
+                <a href="dashboard.html"><i class="fas fa-home"></i><span>Trang chủ</span></a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-title">Quản lý</div>
+                <a href="users.html"><i class="fas fa-users"></i><span>Người dùng</span></a>
+                <a href="categories.html"><i class="fas fa-tags"></i><span>Loại sản phẩm</span></a>
+                <a href="products.html" class="active"><i class="fas fa-box"></i><span>Sản phẩm</span></a>
+                <a href="purchase-orders.html"><i class="fas fa-truck-loading"></i><span>Nhập hàng</span></a>
+                <a href="pricing.html"><i class="fas fa-dollar-sign"></i><span>Quản lý giá</span></a>
+                <a href="orders.html"><i class="fas fa-shopping-cart"></i><span>Đơn hàng</span></a>
+                <a href="inventory.html"><i class="fas fa-warehouse"></i><span>Tồn kho</span></a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="main-header">
+            <h1><i class="fas fa-box"></i> Quản lý Danh Mục Sản Phẩm</h1>
+            <div class="header-actions">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user" style="font-size: 1.2rem; color: var(--brand-crimson);"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="header-username">Người dùng</div>
+                        <div class="user-role" id="header-role">Quản lý</div>
+                    </div>
+                    <button class="logout-btn" id="logout-btn">Đăng xuất</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quản lý Loại sản phẩm -->
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-tags"></i> Quản lý Loại sản phẩm</h2>
+            </div>
+            <div class="category-stats" id="category-stats">
+                <!-- Sẽ được cập nhật bằng JavaScript -->
+            </div>
+        </div>
+
+        <!-- Quản lý Sản phẩm -->
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-box"></i> Quản lý Sản phẩm</h2>
+                <button class="btn-primary btn-add" onclick="openProductModal()">
+                    <i class="fas fa-plus"></i> Thêm Sản phẩm
+                </button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã SP</th>
+                            <th>Tên Sản phẩm</th>
+                            <th>Loại</th>
+                            <th>Giá bán</th>
+                            <th>Tồn kho</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-table-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Quản lý Nhập hàng (đã bị xóa) -->
+
+        <div class="footer">
+            <p>© 2023 Hệ thống Quản lý Bánh Trung Thu MORICO | Phiên bản 2.1.0</p>
+        </div>
+    </main>
+
+    <!-- Modal Sản phẩm -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="product-modal-title"><i class="fas fa-box"></i> Thêm Sản phẩm</h3>
+                <span class="close-btn" onclick="closeProductModal()">&times;</span>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Mã sản phẩm:</label>
+                    <input type="text" id="product-code" placeholder="SP001">
+                </div>
+                <div class="form-group">
+                    <label>Tên sản phẩm:</label>
+                    <input type="text" id="product-name" placeholder="Bánh Trung Thu Nhân Hạt Sen">
+                </div>
+                <div class="form-group">
+                    <label>Loại:</label>
+                    <select id="product-category">
+                        <option value="ngot">Bánh Ngọt</option>
+                        <option value="man">Bánh Mặn</option>
+                        <option value="chay">Bánh Chay</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Giá nhập (giá vốn):</label>
+                    <input type="number" id="product-cost" placeholder="150000" onchange="calculatePrice()">
+                </div>
+                <div class="form-group">
+                    <label>% Lợi nhuận:</label>
+                    <input type="number" id="product-profit-margin" placeholder="40" min="0" max="200" step="0.5" onchange="calculatePrice()">
+                </div>
+                <div class="form-group">
+                    <label>Giá bán (tự động tính):</label>
+                    <input type="number" id="product-price" placeholder="250000" readonly style="background-color: #f5f5f5;">
+                </div>
+                <div class="form-group">
+                    <label>Tồn kho:</label>
+                    <input type="number" id="product-stock" placeholder="100">
+                </div>
+                <div class="form-group">
+                    <label>Trạng thái tồn kho:</label>
+                    <select id="product-stock-status">
+                        <option value="in-stock">Còn hàng</option>
+                        <option value="low-stock">Sắp hết</option>
+                        <option value="out-of-stock">Hết hàng</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Trạng thái hiển thị:</label>
+                    <select id="product-status">
+                        <option value="active">Đang bán</option>
+                        <option value="hidden">Đã ẩn</option>
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label>Mô tả:</label>
+                    <textarea id="product-desc" rows="3" placeholder="Mô tả sản phẩm..."></textarea>
+                </div>
+                <div class="form-group full-width">
+                    <label>Hình ảnh URL:</label>
+                    <input type="text" id="product-image" placeholder="../assets/image/product/banh-trung-thu-golden-plum.png">
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-primary" style="background:#6c757d" onclick="closeProductModal()">Hủy</button>
+                <button class="btn-primary" onclick="saveProduct()">Lưu Sản phẩm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import modal removed -->
+
+    <script>
+        // ==========================
+        // 📦 DANH SÁCH SẢN PHẨM (đã bổ sung trường `stock`)
+        // ==========================
+        let products = JSON.parse(localStorage.getItem('morico_products')) || [
+          {
+            id: 1,
+            code: "SP001",
+            name: "Bánh Trung Thu Golden Plum",
+            price: 189000,
+            cost: 120000,
+            thumbnail: "../assets/image/product/banh-trung-thu-golden-plum.png",
+            category: "ngot",
+            stock: 25,
+            stockStatus: "in-stock",
+            status: "active",
+            details: {
+              "Thương hiệu": "Mor'dan Bakery",
+              "Loại bánh": "Bánh nướng – nhân ngọt",
+              "Trọng lượng": "150g",
+              "Thành phần": "Mận vàng cao cấp, bột mì, bơ, trứng gà, đường...",
+              "Hạn sử dụng": "Xem trên bao bì sản phẩm"
+            },
+            description: `<p>Tinh tế và mới mẻ, <strong>bánh Trung Thu Golden Plum</strong> là sự kết hợp hài hòa giữa vị ngọt của mận vàng và lớp vỏ bánh nướng thơm mềm. Lớp vỏ bánh vàng óng, mềm mịn ôm trọn phần nhân mận dẻo thơm, mang đến trải nghiệm vị giác quen mà lạ.</p>`
+          },
+          {
+            id: 2,
+            code: "SP002",
+            name: "Bánh Trung Thu Hotate XO Mixed Nuts",
+            price: 139000,
+            cost: 90000,
+            thumbnail: "../assets/image/product/banh-trung-thu-hotate-xo-mixed-nuts.png",
+            category: "man",
+            stock: 12,
+            stockStatus: "low-stock",
+            status: "active",
+            details: {
+              "Thương hiệu": "Mor'dan Bakery",
+              "Loại bánh": "Bánh nướng – nhân mặn",
+              "Trọng lượng": "150g",
+              "Thành phần": "Sò điệp XO, các loại hạt (hạt điều, hạt dưa...), lạp xưởng...",
+              "Hạn sử dụng": "Xem trên bao bì sản phẩm"
+            },
+            description: `<p>Một sự phá cách độc đáo cho mùa Trung Thu, <strong>bánh Hotate XO Mixed Nuts</strong> kết hợp vị mặn đậm đà của sốt sò điệp XO cay nhẹ cùng sự bùi béo của các loại hạt dinh dưỡng. Đây là lựa chọn hoàn hảo cho những ai tìm kiếm hương vị mới lạ.</p>`
+          },
+          {
+            id: 3,
+            code: "SP003",
+            name: "Bánh Trung Thu Matcha",
+            price: 99000,
+            cost: 65000,
+            thumbnail: "../assets/image/product/banh-trung-thu-matcha.png",
+            category: "ngot",
+            stock: 40,
+            stockStatus: "in-stock",
+            status: "active",
+            details: {
+              "Thương hiệu": "Mor'dan Bakery",
+              "Loại bánh": "Bánh nướng – nhân trà xanh",
+              "Trọng lượng": "150g",
+              "Thành phần": "Bột matcha, bột mì, trứng, bơ, đậu xanh, đường...",
+              "Hạn sử dụng": "Xem trên bao bì sản phẩm"
+            },
+            description: `<p><strong>Bánh Trung Thu Matcha</strong> mang đậm hương vị thanh mát của trà xanh Nhật Bản. Hương thơm nhẹ, vị ngọt dịu, cùng lớp nhân đậu xanh hòa quyện matcha tinh tế, tạo nên cảm giác nhẹ nhàng và thư giãn.</p>`
+          },
+          {
+            id: 4,
+            code: "SP004",
+            name: "Bánh Trung Thu Murasaki Imo",
+            price: 115000,
+            cost: 75000,
+            thumbnail: "../assets/image/product/banh-trung-thu-murasaki-imo.png",
+            category: "ngot",
+            stock: 30,
+            stockStatus: "in-stock",
+            status: "active",
+            details: {
+              "Thương hiệu": "Mor'dan Bakery",
+              "Loại bánh": "Bánh nướng – nhân ngọt",
+              "Thành phần": "Khoai lang tím Nhật, bột mì, đường, trứng, bơ...",
+              "Trọng lượng": "150g",
+              "Hạn sử dụng": "Xem trên bao bì sản phẩm"
+            },
+            description: `<p><strong>Bánh Trung Thu Murasaki Imo</strong> mang sắc tím dịu dàng của khoai lang Nhật Bản. Nhân khoai dẻo mịn, thơm nhẹ vị ngọt tự nhiên, hòa quyện cùng lớp vỏ bánh mềm vàng hấp dẫn.</p>`
+          },
+          {
+            id: 5,
+            code: "SP005",
+            name: "Bánh Trung Thu Mushroom Mixed Nuts",
+            price: 129000,
+            cost: 85000,
+            thumbnail: "../assets/image/product/banh-trung-thu-mushroom-mixed-nuts.png",
+            category: "chay",
+            stock: 18,
+            stockStatus: "low-stock",
+            stockStatus: "in-stock",
+            status: "active",
+            details: {
+              "Thương hiệu": "Mor'dan Bakery",
+              "Loại bánh": "Bánh chay – nhân mặn nhẹ",
+              "Trọng lượng": "150g",
+              "Thành phần": "Nấm hương, hạt điều, hạt sen, đậu xanh, bột mì...",
+              "Hạn sử dụng": "Xem trên bao bì sản phẩm"
+            },
+            description: `<p><strong>Bánh Trung Thu Mushroom Mixed Nuts</strong> là lựa chọn thanh đạm và dinh dưỡng cho người ăn chay. Hương thơm của nấm hòa quyện cùng vị bùi béo của các loại hạt, tạo nên hương vị tự nhiên, nhẹ nhàng.</p>`
+          },
+          {
+            id: 6,
+            code: "SP006",
+            name: "Bánh Trung Thu Hạt Sen Dừa Non",
+            price: 105000,
+            cost: 70000,
+            thumbnail: "../assets/image/product/banh-trung-thu-pink-nocturne.png",
+            category: "ngot",
+            stock: 50,
+            stockStatus: "in-stock",
+            status: "active",
+            details: {
+              "Thương hiệu": "Mor'dan Bakery",
+              "Loại bánh": "Bánh nướng – nhân ngọt",
+              "Trọng lượng": "150g",
+              "Thành phần": "Hạt sen, dừa non, bột mì, trứng, bơ, đường...",
+              "Hạn sử dụng": "Xem trên bao bì sản phẩm"
+            },
+            description: `<p><strong>Bánh Trung Thu Hạt Sen Dừa Non</strong> mang vị ngọt thanh, bùi béo của hạt sen hòa cùng mùi thơm nhẹ của dừa non, tạo cảm giác mềm mịn dễ chịu.</p>`
+          },
+          {
+            id: 7,
+            code: "SP007",
+            name: "Bánh Trung Thu Đậu Đỏ Trứng Muối",
+            price: 125000,
+            cost: 80000,
+            thumbnail: "../assets/image/product/banh-trung-thu-takesumi-orange.png",
+            category: "man",
+            stock: 0,
+            stockStatus: "out-of-stock",
+            status: "active",
+            details: {
+              "Thương hiệu": "Mor'dan Bakery",
+              "Loại bánh": "Bánh nướng – nhân mặn",
+              "Trọng lượng": "150g",
+              "Thành phần": "Đậu đỏ, trứng muối, bột mì, đường, dầu thực vật...",
+              "Hạn sử dụng": "Xem trên bao bì sản phẩm"
+            },
+            description: `<p><strong>Bánh Trung Thu Đậu Đỏ Trứng Muối</strong> có vị mặn ngọt hài hòa, nhân đậu đỏ bùi quyện cùng trứng muối tan chảy, mang lại cảm giác trọn vị truyền thống và hiện đại.</p>`
+          },
+          {
+            id: 8,
+            code: "SP008",
+            name: "Bánh Trung Thu Xôi Gấc",
+            price: 95000,
+            cost: 60000,
+            thumbnail: "../assets/image/product/banh-trung-thu-xoi-gac.png",
+            category: "ngot",
+            stock: 35,
+            stockStatus: "in-stock",
+            status: "hidden",
+            details: {
+              "Thương hiệu": "Mor'dan Bakery",
+              "Loại bánh": "Bánh dẻo – nhân ngọt",
+              "Trọng lượng": "150g",
+              "Thành phần": "Gạo nếp, gấc tươi, nhân đậu xanh, dừa nạo...",
+              "Hạn sử dụng": "Xem trên bao bì sản phẩm"
+            },
+            description: `<p><strong>Bánh Trung Thu Xôi Gấc</strong> có màu đỏ tự nhiên từ gấc, tượng trưng cho may mắn và hạnh phúc. Hương thơm của nếp quyện cùng vị ngọt nhẹ của đậu xanh và dừa, mang đến cảm giác truyền thống thân quen.</p>`
+          }
+        ];
+
+        let currentEditingId = null;
+
+        // Định nghĩa các loại sản phẩm
+        const categories = [
+            { id: 'ngot', name: 'Bánh Ngọt', status: 'active' },
+            { id: 'man', name: 'Bánh Mặn', status: 'active' },
+            { id: 'chay', name: 'Bánh Chay', status: 'active' }
+        ];
+
+        // Lưu dữ liệu vào localStorage
+        function saveDataToStorage() {
+            localStorage.setItem('morico_products', JSON.stringify(products));
+            localStorage.setItem('morico_categories', JSON.stringify(categories));
+        }
+
+        // Khởi tạo dữ liệu mẫu lần đầu nếu localStorage trống
+        function initializeSampleData() {
+            const existingData = localStorage.getItem('morico_products');
+            
+            // Kiểm tra nếu chưa có data HOẶC data là empty array
+            if (!existingData || JSON.parse(existingData).length === 0) {
+                console.log('🚀 Khởi tạo dữ liệu mẫu lần đầu...');
+                saveDataToStorage();
+                // Reload lại products từ localStorage sau khi save
+                products = JSON.parse(localStorage.getItem('morico_products')) || products;
+                console.log('✅ Đã khởi tạo ' + products.length + ' sản phẩm');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Khởi tạo dữ liệu mẫu lần đầu
+            initializeSampleData();
+
+            // Cập nhật tên người dùng (nếu có đăng nhập)
+            const currentUser = localStorage.getItem('loggedInUser');
+            if (currentUser) {
+                updateUserDisplay(currentUser);
+            }
+
+            // Xử lý đăng xuất
+            document.getElementById('logout-btn').addEventListener('click', function() {
+                localStorage.removeItem('loggedInUser');
+                localStorage.removeItem('adminLoggedIn');
+                localStorage.removeItem('adminUsername');
+                window.location.href = 'index.html';
+            });
+
+            // Hiển thị dữ liệu
+            renderCategoryStats();
+            renderProducts();
+
+            // Tìm kiếm sản phẩm
+            document.getElementById('admin-search').addEventListener('input', function() {
+                searchProductsAdmin(this.value);
+            });
+        });
+        function updateUserDisplay(username) {
+            document.getElementById('header-username').textContent = username;
+            
+            let role = 'Nhân viên';
+            if (username === 'admin') role = 'Quản trị viên';
+            else if (username === 'staff') role = 'Nhân viên bán hàng';
+            
+            document.getElementById('header-role').textContent = role;
+        }
+        // Hiển thị thống kê loại sản phẩm
+        function renderCategoryStats() {
+            const container = document.getElementById('category-stats');
+            container.innerHTML = '';
+
+            categories.forEach(category => {
+                const categoryProducts = products.filter(p => p.category === category.id);
+                const activeProducts = categoryProducts.filter(p => p.status === 'active');
+                const hiddenProducts = categoryProducts.filter(p => p.status === 'hidden');
+                
+                const statCard = document.createElement('div');
+                statCard.className = 'category-stat-card';
+                statCard.innerHTML = `
+                    <h4>${category.name}</h4>
+                    <div class="count">${categoryProducts.length} sản phẩm</div>
+                    <div style="font-size: 0.8rem; color: #666; margin-top: 5px;">
+                        <span style="color: #4CAF50;">${activeProducts.length} đang bán</span> | 
+                        <span style="color: #9E9E9E;">${hiddenProducts.length} đã ẩn</span>
+                    </div>
+                    <div class="category-actions">
+                        <button class="btn-${category.status === 'active' ? 'hide' : 'show'}" 
+                                onclick="toggleCategoryStatus('${category.id}')"
+                                style="padding: 4px 8px; font-size: 0.8rem;">
+                            <i class="fas fa-${category.status === 'active' ? 'eye-slash' : 'eye'}"></i> 
+                            ${category.status === 'active' ? 'Ẩn tất cả' : 'Hiện tất cả'}
+                        </button>
+                        <button class="btn-edit" onclick="viewCategoryProducts('${category.id}')"
+                                style="padding: 4px 8px; font-size: 0.8rem;">
+                            <i class="fas fa-list"></i> Xem
+                        </button>
+                    </div>
+                `;
+                container.appendChild(statCard);
+            });
+        }
+
+        // Ẩn/hiện toàn bộ sản phẩm theo loại
+        function toggleCategoryStatus(categoryId) {
+            const category = categories.find(c => c.id === categoryId);
+            if (!category) return;
+
+            const newStatus = category.status === 'active' ? 'hidden' : 'active';
+            const actionText = newStatus === 'active' ? 'hiện' : 'ẩn';
+            
+            if (confirm(`Bạn có chắc muốn ${actionText} toàn bộ sản phẩm ${category.name}?`)) {
+                // Cập nhật trạng thái loại
+                category.status = newStatus;
+                
+                // Cập nhật tất cả sản phẩm thuộc loại này
+                products.forEach(product => {
+                    if (product.category === categoryId) {
+                        product.status = newStatus;
+                    }
+                });
+
+                saveDataToStorage();
+                renderCategoryStats();
+                renderProducts();
+                alert(`Đã ${actionText} toàn bộ sản phẩm ${category.name}!`);
+            }
+        }
+
+        // Xem sản phẩm theo loại
+        function viewCategoryProducts(categoryId) {
+            const category = categories.find(c => c.id === categoryId);
+            if (!category) return;
+
+            const categoryProducts = products.filter(p => p.category === categoryId);
+            renderProducts(categoryProducts);
+            
+            // Hiển thị thông báo
+            const searchInput = document.getElementById('admin-search');
+            searchInput.value = '';
+            searchInput.placeholder = `Đang xem ${category.name} (${categoryProducts.length} sản phẩm)`;
+        }
+
+        // Tìm kiếm sản phẩm trong admin
+        function searchProductsAdmin(searchTerm) {
+            if (!searchTerm.trim()) {
+                renderProducts();
+                document.getElementById('admin-search').placeholder = 'Tìm kiếm...';
+                return;
+            }
+
+            const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+            const searchResults = products.filter(product => {
+                return product.name.toLowerCase().includes(normalizedSearchTerm) || 
+                       product.code.toLowerCase().includes(normalizedSearchTerm);
+            });
+
+            renderProducts(searchResults);
+        }
+
+        // ===== QUẢN LÝ SẢN PHẨM =====
+        function renderProducts(productList = products) {
+            const tbody = document.getElementById('product-table-body');
+            tbody.innerHTML = '';
+
+            productList.forEach(product => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${product.code}</td>
+                    <td><strong>${product.name}</strong></td>
+                    <td>${getCategoryText(product.category)}</td>
+                    <td>${product.price.toLocaleString()} VNĐ</td>
+                    <td>${product.stock}</td>
+                    <td><span class="status ${getStatusClass(product)}">${getProductStatusText(product)}</span></td>
+                    <td class="action-group">
+                        <button class="btn-edit" onclick="editProduct(${product.id})"><i class="fas fa-edit"></i> Sửa</button>
+                        <button class="btn-${product.status === 'active' ? 'hide' : 'show'}" onclick="toggleProductStatus(${product.id})">
+                            <i class="fas fa-${product.status === 'active' ? 'eye-slash' : 'eye'}"></i> ${product.status === 'active' ? 'Ẩn' : 'Hiện'}
+                        </button>
+                        <button class="btn-delete" onclick="deleteProduct(${product.id})"><i class="fas fa-trash-alt"></i> Xóa</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function getCategoryText(category) {
+            switch(category) {
+                case 'ngot': return 'Bánh Ngọt';
+                case 'man': return 'Bánh Mặn';
+                case 'chay': return 'Bánh Chay';
+                default: return category;
+            }
+        }
+
+        function getStatusClass(product) {
+            if (product.status === 'hidden') return 'hidden';
+            return product.stockStatus;
+        }
+
+        function getProductStatusText(product) {
+            if (product.status === 'hidden') return 'Đã ẩn';
+            
+            switch(product.stockStatus) {
+                case 'in-stock': return 'Còn hàng';
+                case 'low-stock': return 'Sắp hết';
+                case 'out-of-stock': return 'Hết hàng';
+                default: return 'N/A';
+            }
+        }
+
+        function calculatePrice() {
+            const cost = parseFloat(document.getElementById('product-cost').value) || 0;
+            const profitMargin = parseFloat(document.getElementById('product-profit-margin').value) || 0;
+            const price = Math.round(cost * (1 + profitMargin / 100));
+            document.getElementById('product-price').value = price;
+        }
+
+        function openProductModal() {
+            currentEditingId = null;
+            document.getElementById('product-modal-title').innerHTML = '<i class="fas fa-box"></i> Thêm Sản phẩm';
+            document.getElementById('product-modal').style.display = 'flex';
+            // Reset form
+            document.getElementById('product-code').value = '';
+            document.getElementById('product-name').value = '';
+            document.getElementById('product-category').value = 'ngot';
+            document.getElementById('product-cost').value = '';
+            document.getElementById('product-profit-margin').value = '40';
+            document.getElementById('product-price').value = '';
+            document.getElementById('product-stock').value = '';
+            document.getElementById('product-stock-status').value = 'in-stock';
+            document.getElementById('product-status').value = 'active';
+            document.getElementById('product-desc').value = '';
+            document.getElementById('product-image').value = '';
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').style.display = 'none';
+        }
+
+        function saveProduct() {
+            const code = document.getElementById('product-code').value;
+            const name = document.getElementById('product-name').value;
+            const category = document.getElementById('product-category').value;
+            const cost = parseFloat(document.getElementById('product-cost').value);
+            const profitMargin = parseFloat(document.getElementById('product-profit-margin').value) || 0;
+            const price = parseFloat(document.getElementById('product-price').value);
+            const stock = parseInt(document.getElementById('product-stock').value) || 0;
+            const stockStatus = document.getElementById('product-stock-status').value;
+            const status = document.getElementById('product-status').value;
+            const description = document.getElementById('product-desc').value;
+            const thumbnail = document.getElementById('product-image').value;
+
+            if (!code || !name || !category) {
+                alert('Vui lòng nhập đầy đủ thông tin bắt buộc!');
+                return;
+            }
+
+            // TỰ ĐỘNG CẬP NHẬT TRẠNG THÁI TỒN KHO (3 trạng thái)
+            let autoStockStatus;
+            if (stock === 0) {
+                autoStockStatus = 'out-of-stock';
+            } else if (stock <= 20) {
+                autoStockStatus = 'low-stock';
+            } else {
+                autoStockStatus = 'in-stock';
+            }
+
+            const productData = {
+                code, name, category, cost, price, stock, 
+                profitMargin, // Thêm % lợi nhuận
+                stockStatus: autoStockStatus, // Sử dụng trạng thái tự động
+                status, 
+                description, thumbnail,
+                details: {
+                    "Thương hiệu": "Mor'dan Bakery",
+                    "Loại bánh": category === 'ngot' ? 'Bánh nướng – nhân ngọt' : 
+                                 category === 'man' ? 'Bánh nướng – nhân mặn' : 'Bánh chay',
+                    "Trọng lượng": "150g",
+                    "Thành phần": "Thành phần cao cấp...",
+                    "Hạn sử dụng": "Xem trên bao bì sản phẩm"
+                }
+            };
+
+            if (currentEditingId) {
+                // Sửa sản phẩm
+                const index = products.findIndex(p => p.id === currentEditingId);
+                products[index] = { ...products[index], ...productData };
+            } else {
+                // Thêm mới
+                const newProduct = {
+                    id: products.length + 1,
+                    ...productData
+                };
+                products.push(newProduct);
+            }
+
+            saveDataToStorage();
+            renderCategoryStats();
+            renderProducts();
+            closeProductModal();
+            alert(currentEditingId ? 'Đã cập nhật sản phẩm!' : 'Đã thêm sản phẩm mới!');
+        }
+
+        function editProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                currentEditingId = id;
+                document.getElementById('product-modal-title').innerHTML = '<i class="fas fa-edit"></i> Sửa Sản phẩm';
+                document.getElementById('product-code').value = product.code;
+                document.getElementById('product-name').value = product.name;
+                document.getElementById('product-category').value = product.category;
+                document.getElementById('product-cost').value = product.cost;
+                document.getElementById('product-profit-margin').value = product.profitMargin || 0;
+                document.getElementById('product-price').value = product.price;
+                document.getElementById('product-stock').value = product.stock;
+                document.getElementById('product-stock-status').value = product.stockStatus;
+                document.getElementById('product-status').value = product.status;
+                document.getElementById('product-desc').value = product.description || '';
+                document.getElementById('product-image').value = product.thumbnail;
+                document.getElementById('product-modal').style.display = 'flex';
+            }
+        }
+
+        function toggleProductStatus(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                product.status = product.status === 'active' ? 'hidden' : 'active';
+                saveDataToStorage();
+                renderCategoryStats();
+                renderProducts();
+                alert(`Đã ${product.status === 'active' ? 'hiện' : 'ẩn'} sản phẩm!`);
+            }
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
+                products = products.filter(p => p.id !== id);
+                saveDataToStorage();
+                renderCategoryStats();
+                renderProducts();
+                alert('Đã xóa sản phẩm!');
+            }
+        }
+
+        // Import/order management removed
+    </script>
+</body>
+</html>
+</html>

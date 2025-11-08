@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Quản lý Người dùng - Hệ thống Bánh Trung Thu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <link rel="stylesheet" href="../assets/css/user-admin.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-wrap">
+                <div class="logo-img">
+                    <i class="fas fa-moon" style="font-size: 2rem; color: var(--brand-crimson);"></i>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-start">
+                    <div style="font-weight:800;color:#fff;font-size:1rem">MORICO</div>
+                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.92)">Bánh Trung Thu</div>
+                </div>
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-section">
+                <div class="nav-title">Bảng điều khiển</div>
+                <a href="dashboard.html"><i class="fas fa-home"></i><span>Trang chủ</span></a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">Quản lý</div>
+                <a href="users.html" class="active"><i class="fas fa-users"></i><span>Người dùng</span></a>
+                <a href="categories.html"><i class="fas fa-tags"></i><span>Loại sản phẩm</span></a>
+                <a href="products.html"><i class="fas fa-box"></i><span>Sản phẩm</span></a>
+                <a href="purchase-orders.html"><i class="fas fa-truck-loading"></i><span>Nhập hàng</span></a>
+                <a href="pricing.html"><i class="fas fa-dollar-sign"></i><span>Quản lý giá</span></a>
+                <a href="orders.html"><i class="fas fa-shopping-cart"></i><span>Đơn hàng</span></a>
+                <a href="inventory.html"><i class="fas fa-warehouse"></i><span>Tồn kho</span></a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="main-header">
+            <h1><i class="fas fa-users"></i> Quản lý Khách hàng</h1>
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm khách hàng...">
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user" style="font-size: 1.2rem; color: var(--brand-crimson);"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="header-username">Admin</div>
+                        <div class="user-role" id="header-role">Quản trị viên</div>
+                    </div>
+                    <button class="logout-btn" id="logout-btn">Đăng xuất</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h4>Tổng số khách hàng</h4>
+                        <p id="total-users">0</p>
+                    </div>
+                    <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="card success">
+                <div class="card-header">
+                    <div>
+                        <h4>Đang hoạt động</h4>
+                        <p id="active-users">0</p>
+                    </div>
+                    <div class="card-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="card danger">
+                <div class="card-header">
+                    <div>
+                        <h4>Đã khóa</h4>
+                        <p id="locked-users">0</p>
+                    </div>
+                    <div class="card-icon">
+                        <i class="fas fa-user-lock"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-table"></i> Danh sách Khách hàng</h3>
+                <div>
+                    <button class="btn-refresh" id="add-user-btn" style="background-color: #ad21f3; margin-left: 10px;">
+                        <i class="fas fa-user-plus"></i> Thêm khách hàng
+                    </button>
+                    <button class="btn-refresh" id="refresh-btn">
+                        <i class="fas fa-sync-alt"></i> Làm mới
+                    </button>
+                    <button class="btn-refresh" id="init-sample-btn" style="background-color: #4CAF50; margin-left: 10px;">
+                        <i class="fas fa-database"></i> Khởi tạo mẫu
+                    </button>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Họ tên</th>
+                            <th>Tên đăng nhập</th>
+                            <th>Mật khẩu</th>
+                            <th>Số điện thoại</th>
+                            <th>Ngày đăng ký</th>
+                            <th>Trạng thái</th>
+                            <th style="text-align:center;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2023 Hệ thống Quản lý Bánh Trung Thu MORICO | Phiên bản 2.1.0</p>
+        </div>
+    </main>
+
+    <div id="reset-modal" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-redo"></i> Đặt lại mật khẩu</h3>
+            <p><strong>Tên khách hàng:</strong> <span id="reset-username"></span></p>
+            <p><strong>Mật khẩu hiện tại:</strong> <span id="current-password"></span></p>
+            <label for="new-password">Mật khẩu mới:</label>
+            <input type="text" id="new-password" placeholder="Nhập mật khẩu mới" maxlength="20" />
+            <label for="confirm-password">Xác nhận mật khẩu mới:</label>
+            <input type="text" id="confirm-password" placeholder="Nhập lại mật khẩu mới" maxlength="20" />
+            <div class="password-requirement">
+                <i class="fas fa-info-circle"></i>
+                <span>Mật khẩu phải ít nhất 6 ký tự</span>
+            </div>
+            <div class="error-message" id="password-error"></div>
+            <div class="modal-actions">
+                <button id="confirm-reset" class="btn-confirm">Xác nhận</button>
+                <button id="cancel-reset" class="btn-cancel">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="add-user-modal" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-user-plus"></i> Thêm khách hàng mới</h3>
+            <label for="new-fullname">Họ tên:</label>
+            <input type="text" id="new-fullname" placeholder="Nhập họ tên" />
+
+            <label for="new-username">Tên đăng nhập:</label>
+            <input type="text" id="new-username" placeholder="Nhập tên đăng nhập" />
+
+            <label for="new-user-password">Mật khẩu:</label>
+            <input type="text" id="new-user-password" placeholder="Nhập mật khẩu" />
+
+            <label for="new-phone">Số điện thoại:</label>
+            <input type="text" id="new-phone" placeholder="Nhập số điện thoại" />
+
+            <label for="new-status">Trạng thái:</label>
+            <select id="new-status">
+                <option value="active">Đang hoạt động</option>
+                <option value="locked">Đã khóa</option>
+            </select>
+
+            <div class="error-message" id="add-user-error"></div>
+            <div class="modal-actions">
+                <button id="confirm-add-user" class="btn-confirm">Thêm</button>
+                <button id="cancel-add-user" class="btn-cancel">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/user-admin.js"></script>
+    
+</body>
+</html>

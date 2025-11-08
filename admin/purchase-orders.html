@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Quản lý Nhập hàng - Hệ thống Bánh Trung Thu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <link rel="stylesheet" href="../assets/css/admin_style.css" /> 
+    
+    <style>
+        :root{
+            --brand-gold: #E6BE8A;
+            --brand-crimson: #8B0000;
+            --bg-cream: #FFF8E7;
+            --muted-brown: #5D4037;
+            --card-white: #ffffff;
+            --accent-shadow: rgba(139,0,0,0.12);
+        }
+        
+        *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif}
+        html,body{height:100%}
+        body{
+            background: linear-gradient(180deg, var(--bg-cream) 0%, #FFF8F0 100%);
+            color: var(--brand-crimson);
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+        }
+
+        .sidebar{
+            width:280px;position:fixed;top:0;left:0;height:100vh;
+            background: linear-gradient(135deg, var(--brand-gold) 0%, #D9A86B 100%);
+            color: rgba(255,255,255,0.95);box-shadow: 0 0.15rem 1.75rem var(--accent-shadow);z-index:1000;overflow:auto;
+        }
+        .sidebar-header{padding:1.6rem 1rem;text-align:center;border-bottom:1px solid rgba(255,255,255,0.12);}
+        .logo-wrap{display:flex;align-items:center;justify-content:center;gap:0.8rem;}
+        .logo-img{width:72px;height:72px;border-radius:12px;background: rgba(255,255,255,0.9);padding:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,0.08);}
+        .nav-menu{padding:1rem 0;margin-top:8px}
+        .nav-title{padding:0 1.4rem;margin-bottom:0.4rem;font-size:0.75rem;text-transform:uppercase;opacity:0.85;color:rgba(255,255,255,0.9);font-weight:700}
+        .nav-menu a{display:flex;align-items:center;padding:0.8rem 1.4rem;color:rgba(255,255,255,0.96);text-decoration:none;border-left:3px solid transparent;transition:all .18s}
+        .nav-menu a i{width:22px;text-align:center;margin-right:12px;font-size:1.05rem}
+        .nav-menu a:hover, .nav-menu a.active{background:rgba(255,255,255,0.12);border-left-color:#fff;color:#fff}
+        .nav-menu a span{font-weight:600}
+        .main-content{margin-left:280px;padding:2rem;background:transparent;min-height:100vh;}
+        .main-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(93,64,55,0.06)}
+        .main-header h1{font-size:2rem;font-weight:800;color:var(--brand-crimson);display:flex;align-items:center;gap:12px}
+        .main-header h1 i{color:var(--brand-gold);font-size:1.6rem}
+        .header-actions{display:flex;align-items:center;gap:1rem}
+        .search-box{position:relative}
+        .search-box input{padding:0.64rem 1rem 0.64rem 2.6rem;border-radius:50px;border:1px solid rgba(0,0,0,0.06);width:250px;background:var(--card-white);color:var(--brand-crimson)}
+        .search-box i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted-brown)}
+        .user-info{display:flex;align-items:center;gap:10px;padding:0.45rem 0.8rem;background:var(--card-white);border-radius:50px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+        .user-details .user-name{font-weight:700;color:var(--brand-crimson)}
+        .user-role{font-size:0.78rem;color:var(--muted-brown)}
+        .logout-btn {background-color: var(--brand-crimson);color: white;border: none;padding: 8px 15px;border-radius: 20px;cursor: pointer;font-weight: 500;margin-left: 15px;transition: background-color 0.3s;}
+        .logout-btn:hover {background-color: #6a0000;}
+        .footer{text-align:center;padding:1.4rem;color:var(--muted-brown);font-size:0.88rem;border-top:1px solid rgba(93,64,55,0.06);margin-top:1.6rem}
+
+        /* Card và table styles */
+        .card {background:var(--card-white);border-radius:12px;padding:1.5rem;border-top:4px solid var(--brand-gold);box-shadow:0 10px 30px rgba(92,64,55,0.06);margin-bottom:1.6rem;}
+        .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding-bottom:0.6rem;border-bottom:1px solid rgba(93,64,55,0.06)}
+        .card-header h2{font-size:1.5rem;font-weight:800;color:var(--brand-crimson);display:flex;align-items:center;gap:10px}
+        .card-header h2 i{color:var(--brand-gold)}
+
+        .btn-primary {
+            background-color: var(--brand-crimson);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary:hover {background-color: #6a0000;}
+
+        table{width:100%;border-collapse:collapse;font-size:0.95rem}
+        table th, table td{padding:0.8rem;text-align:left;border-bottom:1px solid rgba(93,64,55,0.06)}
+        table th{font-weight:800;color:var(--muted-brown);font-size:0.78rem;text-transform:uppercase;background:rgba(230,190,138,0.1)}
+        
+        /* Status Tags */
+        .status{padding:0.35rem 0.7rem;border-radius:50px;font-weight:700;font-size:0.78rem;text-align:center;display:inline-block;}
+        .status.draft{background:#FFFBE6;color:#CC9900;border:1px solid #E6D899;} /* Mới thêm: Trạng thái Nháp */
+        .status.completed{background:#E8F5E9;color:#2E7D32;border:1px solid #C8E6C9;} /* Đã hoàn thành */
+        .status.pending{background:#F0F8FF;color:#007BFF;border:1px solid #B3D9FF;} /* Đang chờ/Đang nhập */
+
+        .btn-action-small { padding: 4px 8px; font-size: 0.8rem; border-radius: 4px; margin-left: 5px; }
+
+
+        @media(max-width:768px){
+            .sidebar{width:72px}
+            .sidebar .nav-title,.nav-menu a span, .sidebar-header .logo-wrap div:not(.logo-img){display:none}
+            .nav-menu a{justify-content:center;padding:1rem 0.5rem}
+            .main-content{margin-left:72px;padding:1rem}
+            .search-box input{width:160px}
+        }
+        @media(max-width:576px){
+            .search-box{display:none}
+            .user-details{display:none}
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-wrap">
+                <div class="logo-img">
+                    <i class="fas fa-moon" style="font-size: 2rem; color: var(--brand-crimson);"></i>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-start">
+                    <div style="font-weight:800;color:#fff;font-size:1rem">MORICO</div>
+                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.92)">Bánh Trung Thu</div>
+                </div>
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-section">
+                <div class="nav-title">Bảng điều khiển</div>
+                <a href="dashboard.html"><i class="fas fa-home"></i><span>Trang chủ</span></a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">Quản lý</div>
+                <a href="users.html"><i class="fas fa-users"></i><span>Người dùng</span></a>
+                <a href="categories.html"><i class="fas fa-tags"></i><span>Loại sản phẩm</span></a>
+                <a href="products.html"><i class="fas fa-box"></i><span>Sản phẩm</span></a>
+                <a href="purchase-orders.html" class="active"><i class="fas fa-truck-loading"></i><span>Nhập hàng</span></a>
+                <a href="pricing.html"><i class="fas fa-dollar-sign"></i><span>Quản lý giá</span></a>
+                <a href="orders.html"><i class="fas fa-shopping-cart"></i><span>Đơn hàng</span></a>
+                <a href="inventory.html"><i class="fas fa-warehouse"></i><span>Tồn kho</span></a>
+                
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="main-header">
+            <h1><i class="fas fa-truck-loading"></i> Quản lý Nhập hàng</h1>
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Tìm kiếm phiếu nhập...">
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user" style="font-size: 1.2rem; color: var(--brand-crimson);"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="header-username">Người dùng</div>
+                        <div class="user-role" id="header-role">Quản lý</div>
+                    </div>
+                    <button class="logout-btn" id="logout-btn">Đăng xuất</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="padding: 1rem 1.5rem; margin-bottom: 1.2rem; border-top: none; box-shadow: 0 4px 12px rgba(92,64,55,0.04);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--muted-brown); margin: 0;">Danh sách Phiếu nhập</h3>
+                <button class="btn-primary" onclick="addPurchaseOrder()">
+                    <i class="fas fa-plus"></i> Thêm Phiếu nhập Mới
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="overflow-x: auto;">
+                <table id="purchase-order-table">
+                    <thead>
+                        <tr>
+                            <th>Mã Phiếu</th>
+                            <th>Nhà cung cấp</th>
+                            <th>Ngày nhập</th>
+                            <th style="text-align: right;">Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#PN001</td>
+                            <td>Công ty ABC</td>
+                            <td>2023-10-25</td>
+                            <td style="text-align: right;">**15,500,000₫**</td>
+                            <td><span class="status completed">Đã hoàn thành</span></td>
+                            <td>
+                                <button class="btn-primary btn-action-small" onclick="viewPurchaseOrder('PN001')">Chi tiết</button>
+                                <button class="btn-primary btn-action-small" style="background-color: #FFC107; color: var(--muted-brown);" onclick="editPurchaseOrder('PN001')">Sửa</button>
+                                <button class="btn-primary btn-action-small" style="background-color: #DC3545;" onclick="deletePurchaseOrder('PN001')">Xóa</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#PN002</td>
+                            <td>Doanh nghiệp Bánh Kẹo X</td>
+                            <td>2023-10-28</td>
+                            <td style="text-align: right;">**8,200,000₫**</td>
+                            <td><span class="status draft">Bản nháp</span></td>
+                            <td>
+                                <button class="btn-primary btn-action-small" onclick="viewPurchaseOrder('PN002')">Chi tiết</button>
+                                <button class="btn-primary btn-action-small" style="background-color: #FFC107; color: var(--muted-brown);" onclick="editPurchaseOrder('PN002')">Sửa</button>
+                                <button class="btn-primary btn-action-small" style="background-color: #DC3545;" onclick="deletePurchaseOrder('PN002')">Xóa</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#PN003</td>
+                            <td>Xưởng sản xuất D</td>
+                            <td>2023-11-01</td>
+                            <td style="text-align: right;">**4,750,000₫**</td>
+                            <td><span class="status pending">Đang nhập hàng</span></td>
+                            <td>
+                                <button class="btn-primary btn-action-small" onclick="viewPurchaseOrder('PN003')">Chi tiết</button>
+                                <button class="btn-primary btn-action-small" style="background-color: #FFC107; color: var(--muted-brown);" onclick="editPurchaseOrder('PN003')">Sửa</button>
+                                <button class="btn-primary btn-action-small" style="background-color: #DC3545;" onclick="deletePurchaseOrder('PN003')">Xóa</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="footer">
+            <p>© 2023 Hệ thống Quản lý Bánh Trung Thu MORICO | Phiên bản 2.1.0</p>
+        </div>
+    </main>
+
+    <script src="../assets/js/admin_actions.js"></script>
+    <script>
+        // Hàm giả lập thêm mới phiếu nhập
+        function addPurchaseOrder() {
+            alert('Chuyển đến trang tạo phiếu nhập mới (ví dụ: purchase-create.html).');
+            // Ví dụ: window.location.href = 'purchase-create.html';
+        }
+
+        // Hàm giả lập xem chi tiết phiếu nhập
+        function viewPurchaseOrder(id) {
+            alert(`Xem chi tiết Phiếu nhập ${id}.`);
+             // Ví dụ: window.location.href = 'purchase-edit.html?id=' + id;
+        }
+        
+        // Hàm giả lập sửa phiếu nhập
+        function editPurchaseOrder(id) {
+            alert(`Chỉnh sửa Phiếu nhập ${id}.`);
+             // Ví dụ: window.location.href = 'purchase-edit.html?id=' + id;
+        }
+
+        // Hàm giả lập xóa phiếu nhập
+        function deletePurchaseOrder(id) {
+            if(confirm(`Bạn có chắc chắn muốn xóa Phiếu nhập ${id}?`)) {
+                alert(`Đã xóa Phiếu nhập ${id} (Giả lập).`);
+                // Thực hiện logic xóa dữ liệu thực tế tại đây
+            }
+        }
+        
+        // Đảm bảo thông tin người dùng được hiển thị
+        document.addEventListener('DOMContentLoaded', function() {
+            // Giả lập hiển thị thông tin người dùng
+            const currentUser = localStorage.getItem('loggedInUser') || 'Admin';
+            const role = currentUser === 'admin' ? 'Quản trị viên' : 'Nhân viên';
+            document.getElementById('header-username').textContent = currentUser;
+            document.getElementById('header-role').textContent = role;
+        });
+    </script>
+</body>
+</html>

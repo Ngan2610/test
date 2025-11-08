@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết Phiếu nhập hàng - MoonCake Delight</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="../assets/css/admin_style.css" />
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-wrap">
+                <div class="logo-img">
+                    <i class="fas fa-moon" style="font-size: 2rem; color: var(--brand-crimson);"></i>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-start">
+                    <div style="font-weight:800;color:#fff;font-size:1rem">MORICO</div>
+                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.92)">Bánh Trung Thu</div>
+                </div>
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-section">
+                <div class="nav-title">Bảng điều khiển</div>
+                <a href="dashboard.html"><i class="fas fa-home"></i><span>Trang chủ</span></a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-title">Quản lý</div>
+                <a href="users.html"><i class="fas fa-users"></i><span>Người dùng</span></a>
+                <a href="categories.html"><i class="fas fa-tags"></i><span>Loại sản phẩm</span></a>
+                <a href="products.html"><i class="fas fa-box"></i><span>Sản phẩm</span></a>
+                <a href="purchase-orders.html" class="active"><i class="fas fa-truck-loading"></i><span>Nhập hàng</span></a>
+                <a href="pricing.html"><i class="fas fa-dollar-sign"></i><span>Quản lý giá</span></a>
+                <a href="orders.html"><i class="fas fa-shopping-cart"></i><span>Đơn hàng</span></a>
+                <a href="inventory.html"><i class="fas fa-warehouse"></i><span>Tồn kho</span></a>
+                
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="main-header">
+            <h1 id="po-page-title"><i class="fas fa-file-invoice"></i> Chi tiết Phiếu nhập hàng #PN001</h1>
+            <div class="header-actions">
+                <a href="purchase-orders.html" class="btn-secondary" style="font-weight: 600;"><i class="fas fa-arrow-left"></i> Quay lại</a>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user" style="font-size: 1.2rem; color: var(--brand-crimson);"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="header-username">Người dùng</div>
+                        <div class="user-role" id="header-role">Quản lý</div>
+                    </div>
+                    <button class="logout-btn" id="logout-btn">Đăng xuất</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:flex; gap: 20px;">
+            <div style="flex: 2;">
+                <div class="card mb-4">
+                    <div class="card-header"><h2><i class="fas fa-plus-circle"></i> Thêm sản phẩm vào phiếu</h2></div>
+                    <div style="padding: 1.5rem;">
+                        <form style="display: flex; gap: 10px; align-items: flex-end;">
+                            <div style="flex: 2;">
+                                <label style="display: block;">Chọn sản phẩm</label>
+                                <select class="form-control" id="po-product-select">
+                                    <option selected value="">-- Chọn sản phẩm --</option>
+                                    <option value="1">Bánh nướng thập cẩm</option>
+                                    <option value="2">Bánh nướng đậu xanh</option>
+                                    <option value="3">Bánh dẻo hạt sen</option>
+                                </select>
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="display: block;">Giá nhập</label>
+                                <input type="number" class="form-control" id="po-cost-price" placeholder="0" value="45000">
+                            </div>
+                            <div style="flex: 0; width: 80px;">
+                                <label style="display: block;">Số lượng</label>
+                                <input type="number" class="form-control" id="po-quantity" value="1" min="1">
+                            </div>
+                            <div style="flex: 0;">
+                                <button type="button" class="btn-primary" id="po-add-item-btn" onclick="addPurchaseItem()" style="width: 100%;"><i class="fas fa-plus"></i> Thêm</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><h2><i class="fas fa-list-alt"></i> Chi tiết phiếu nhập</h2></div>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th>Giá nhập</th>
+                                    <th>Số lượng</th>
+                                    <th style="text-align:right;">Thành tiền</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="po-items-tbody">
+                                <tr>
+                                    <td>Bánh nướng thập cẩm</td>
+                                    <td>45,000đ</td>
+                                    <td>20</td>
+                                    <td style="text-align:right;">900,000đ</td>
+                                    <td><button class="btn-delete btn-action-small" onclick="removePurchaseItem(this)"><i class="fas fa-times"></i> Xóa</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Bánh nướng đậu xanh</td>
+                                    <td>40,000đ</td>
+                                    <td>15</td>
+                                    <td style="text-align:right;">600,000đ</td>
+                                    <td><button class="btn-delete btn-action-small" onclick="removePurchaseItem(this)"><i class="fas fa-times"></i> Xóa</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Bánh dẻo hạt sen</td>
+                                    <td>45,000đ</td>
+                                    <td>10</td>
+                                    <td style="text-align:right;">450,000đ</td>
+                                    <td><button class="btn-delete btn-action-small" onclick="removePurchaseItem(this)"><i class="fas fa-times"></i> Xóa</button></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" style="text-align:right; font-weight:bold; font-size: 1.2rem;">Tổng cộng</td>
+                                    <td style="text-align:right; font-weight:bold; font-size: 1.2rem;" id="po-total-cost">1,950,000đ</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div style="flex: 1;">
+                <div class="card">
+                    <div class="card-header"><h2><i class="fas fa-clipboard-check"></i> Thông tin Phiếu nhập</h2></div>
+                    <div style="padding: 1.5rem;">
+                        <div class="form-group">
+                            <label>Ngày nhập</label>
+                            <input type="date" class="form-control" id="po-date" value="2023-10-15">
+                        </div>
+                        <div class="form-group">
+                            <label>Nhà cung cấp</label>
+                            <input type="text" class="form-control" id="po-supplier" value="Công ty Thực phẩm ABC">
+                        </div>
+                        <div class="form-group">
+                            <label>Trạng thái</label>
+                            <div id="po-status-display">
+                                <span class="status-completed" style="width: 100%; display: block;">Đã hoàn thành</span>
+                            </div>
+                        </div>
+                        <hr style="margin: 1.5rem 0;"/>
+                        <div style="display: grid; gap: 10px;" id="po-action-buttons">
+                            <button class="btn-secondary" id="po-save-draft-btn" onclick="savePurchaseDraft()"><i class="fas fa-save"></i> Lưu tạm</button>
+                            <button class="btn-primary btn-add" id="po-complete-btn" onclick="completePurchase()"><i class="fas fa-check-circle"></i> Hoàn thành nhập kho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <p>© 2023 Hệ thống Quản lý Bánh Trung Thu MORICO | Phiên bản 2.1.0</p>
+        </div>
+    </main>
+    <script src="../assets/js/admin_actions.js"></script>
+</body>
+</html>

@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý Đơn hàng - MoonCake Delight</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="../assets/css/admin_style.css" />
+
+    <style>
+          /*
+    * === CSS CHO NÚT HÀNH ĐỘNG TRONG BẢNG ===
+    */
+
+    /* 1. Sửa bố cục cho ô "Hành động" */
+    table.order-table tbody td:last-child {
+      display: flex;
+      flex-wrap: wrap; /* Cho phép xuống dòng gọn gàng nếu màn hình quá hẹp */
+      gap: 6px;       /* Tạo khoảng cách 6px giữa các nút */
+      vertical-align: middle; /* Căn giữa theo chiều dọc của hàng */
+    }
+
+    /* 2. Kiểu dáng chung cho các nút (làm đẹp) */
+    .btn-action {
+      display: inline-block;
+      padding: 4px 10px; /* Làm nút nhỏ gọn: 4px trên/dưới, 10px trái/phải */
+      font-size: 0.85rem;  /* Cỡ chữ nhỏ phù hợp trong bảng */
+      font-weight: 600;
+      color: #c13434;        /* Chữ trắng */
+      border: none;
+      border-radius: 5px;  /* Bo góc */
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      white-space: nowrap; /* Giữ chữ trên 1 hàng */
+    }
+
+    .btn-action:hover {
+      opacity: 0.85; /* Hiệu ứng hover đơn giản */
+    }
+
+    .btn-action:active {
+      transform: scale(0.98); /* Hiệu ứng khi nhấn nút */
+    }
+
+    /* 3. Màu sắc riêng biệt cho từng nút */
+
+    /* Nút "Chi tiết" (btn-view) */
+    .btn-action.btn-view {
+      background-color: #007bff; /* Màu xanh dương (thông tin) */
+      /* Hoặc dùng màu nâu: background-color: var(--muted-brown); */
+    }
+
+    /* Nút "Cập nhật" (btn-update) */
+    .btn-action.btn-update {
+      background-color: #28a745; /* Màu xanh lá (cập nhật/thành công) */
+      /* Hoặc dùng màu cam: background-color: #ffc107; color: #212529; */
+    }
+      .filter-section {
+        display: flex;
+        flex-wrap: wrap; /* Cho phép xuống dòng trên màn hình nhỏ */
+        justify-content: space-between; /* Đẩy 2 nhóm ra 2 bên */
+        align-items: flex-end; /* Căn chỉnh các nhóm theo đáy */
+        gap: 1rem; /* Khoảng cách nếu chúng xuống dòng */
+      }
+
+      .filter-inputs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.25rem; /* Khoảng cách giữa các ô input */
+        align-items: flex-end;
+      }
+
+      .filter-group {
+        display: flex;
+        align-items: center; /* Căn giữa label và input theo chiều dọc */
+        gap: 0.5rem; /* Khoảng cách giữa label và input */
+      }
+      
+      .filter-group label {
+        white-space: nowrap; /* Không cho label xuống dòng */
+        font-weight: 600;
+        color: #333;
+      }
+
+      /* Căn chỉnh các nút */
+      .filter-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+      
+      /* Cải thiện giao diện input/select (có thể bạn đã có) */
+      .filter-group input[type="text"],
+      .filter-group input[type="date"],
+      .filter-group select {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        background: #fff;
+      }
+
+      .filter-group input[type="text"] {
+          width: 220px; /* Cho ô tìm kiếm rộng hơn một chút */
+      }
+    </style>
+    </head>
+  <body>
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-wrap">
+          <div class="logo-img">
+            <i class="fas fa-moon" style="font-size: 2rem; color: var(--brand-crimson);"></i>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-start">
+            <div style="font-weight:800;color:#fff;font-size:1rem">MORICO</div>
+            <div style="font-size:0.75rem;color:rgba(255,255,255,0.92)">Bánh Trung Thu</div>
+          </div>
+        </div>
+      </div>
+      <nav class="nav-menu">
+        <div class="nav-section">
+          <div class="nav-title">Bảng điều khiển</div>
+          <a href="dashboard.html"><i class="fas fa-home"></i><span>Trang chủ</span></a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-title">Quản lý</div>
+          <a href="users.html"><i class="fas fa-users"></i><span>Người dùng</span></a>
+          <a href="categories.html"><i class="fas fa-tags"></i><span>Loại sản phẩm</span></a>
+          <a href="products.html"><i class="fas fa-box"></i><span>Sản phẩm</span></a>
+          <a href="purchase-orders.html"><i class="fas fa-truck-loading"></i><span>Nhập hàng</span></a>
+          <a href="pricing.html"><i class="fas fa-dollar-sign"></i><span>Quản lý giá</span></a>
+          <a href="orders.html" class="active"><i class="fas fa-shopping-cart"></i><span>Đơn hàng</span></a>
+          <a href="inventory.html"><i class="fas fa-warehouse"></i><span>Tồn kho</span></a>
+          <a href="reports.html"><i class="fas fa-chart-line"></i><span>Báo cáo</span></a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div class="main-header">
+        <h1><i class="fas fa-list-alt"></i> Quản lý Đơn hàng</h1>
+        <div class="header-actions">
+          <div class="user-info">
+            <div class="user-avatar">
+              <i class="fas fa-user" style="font-size: 1.2rem; color: var(--brand-crimson);"></i>
+            </div>
+            <div class="user-details">
+              <div class="user-name" id="header-username">Người dùng</div>
+              <div class="user-role" id="header-role">Quản lý</div>
+            </div>
+            <button class="logout-btn" id="logout-btn">Đăng xuất</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="fas fa-filter"></i> Bộ lọc Đơn hàng</h2>
+        </div>
+        <div class="filter-section">
+          
+          <div class="filter-inputs">
+            <div class="filter-group">
+              <label>Tìm kiếm:</label>
+              <input type="text" id="search-input" placeholder="Mã đơn, tên khách hàng...">
+            </div>
+            <div class="filter-group">
+              <label>Trạng thái:</label>
+              <select id="status-filter">
+                <option value="all">Tất cả trạng thái</option>
+                <option value="pending">Chờ xác nhận</option>
+                <option value="confirmed">Đã xác nhận</option>
+                <option value="shipping">Đang giao hàng</option>
+                <option value="delivered">Đã giao thành công</option>
+                <option value="cancelled">Đã hủy</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Từ ngày:</label>
+              <input type="date" id="start-date">
+            </div>
+            <div class="filter-group">
+              <label>Đến ngày:</label>
+              <input type="date" id="end-date">
+            </div>
+          </div>
+          
+          <div class="filter-actions">
+            <button class="btn-action" id="apply-filter">Áp dụng</button>
+            <button class="btn-action" id="aplly-filter">Đặt lại</button>
+          </div>
+
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="fas fa-table"></i> Danh sách Đơn hàng</h2>
+        </div>
+        <table class="order-table">
+          <thead>
+            <tr>
+              <th style="width: 12%;">Mã Đơn</th>
+              <th style="width: 20%;">Khách hàng</th>
+              <th style="width: 15%;">Số điện thoại</th>
+              <th style="width: 12%;">Tổng tiền</th>
+              <th style="width: 15%;">Trạng thái</th>
+              <th style="width: 16%;">Ngày đặt</th>
+              <th style="width: 10%;">Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="order-list">
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footer">
+        <p>© 2023 Hệ thống Quản lý Bánh Trung Thu MORICO | Phiên bản 2.1.0</p>
+      </div>
+    </main>
+    
+    <div id="order-detail-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="detail-modal-title">Chi tiết Đơn hàng</h3>
+          <span class="close-btn">&times;</span>
+        </div>
+        
+        <div class="order-detail-section">
+          <h4><i class="fas fa-info-circle"></i> Thông tin Đơn hàng</h4>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">Mã đơn hàng:</span>
+              <span id="modal-order-id"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Ngày đặt:</span>
+              <span id="modal-order-date"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Trạng thái:</span>
+              <span id="modal-status"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Tổng tiền:</span>
+              <span id="modal-total" style="font-weight:700;color:var(--brand-crimson)"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Phương thức thanh toán:</span>
+              <span id="modal-payment"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="order-detail-section">
+          <h4><i class="fas fa-user"></i> Thông tin Khách hàng</h4>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">Họ tên:</span>
+              <span id="modal-customer"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Số điện thoại:</span>
+              <span id="modal-phone"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Địa chỉ:</span>
+              <span id="modal-address"></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Email:</span>
+              <span id="modal-email"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="order-detail-section">
+          <h4><i class="fas fa-box"></i> Sản phẩm</h4>
+          <table class="products-table">
+            <thead>
+              <tr>
+                <th>Tên sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Đơn giá</th>
+                <th>Thành tiền</th>
+              </tr>
+            </thead>
+            <tbody id="modal-products">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Dữ liệu đơn hàng - sẽ được tải từ localStorage
+      let orders = [];
+      
+      const statusMap = {
+        'pending': { text: 'Chờ xác nhận', class: 'pending' },
+        'confirmed': { text: 'Đã xác nhận', class: 'confirmed' },
+        'shipping': { text: 'Đang giao hàng', class: 'shipping' },
+        'delivered': { text: 'Đã giao thành công', class: 'delivered' },
+        'cancelled': { text: 'Đã hủy', class: 'cancelled' },
+      };
+
+      // === CÁC HÀM QUẢN LÝ DỮ LIỆU ===
+      function loadOrdersFromStorage() {
+        const storedOrders = localStorage.getItem('orders');
+        if (storedOrders) {
+          orders = JSON.parse(storedOrders);
+        } else {
+          // Dữ liệu mẫu nếu chưa có
+          orders = [
+            { 
+              id: 'ORD-0125', 
+              customer: 'Nguyễn Văn A', 
+              phone: '0901234567',
+              email: 'nguyenvana@email.com',
+              address: '123 Đường ABC, Quận 1, TP.HCM',
+              total: 1250000, 
+              status: 'pending', 
+              date: '2023-10-20', // Ngày cũ hơn
+              paymentMethod: 'Thanh toán khi nhận hàng (COD)',
+              products: [
+                { name: 'Bánh Trung Thu Nhân Hạt Sen', quantity: 2, price: 250000, total: 500000 },
+                { name: 'Bánh Trung Thu Nhân Đậu Đỏ', quantity: 3, price: 250000, total: 750000 }
+              ]
+            },
+            { 
+              id: 'ORD-0126', 
+              customer: 'Trần Thị B', 
+              phone: '0912345678',
+              email: 'tranthib@email.com',
+              address: '456 Đường XYZ, Quận 3, TP.HCM',
+              total: 850000, 
+              status: 'confirmed', 
+              date: '2023-10-22', // Ngày mới hơn
+              paymentMethod: 'Chuyển khoản (Momo)',
+              products: [
+                { name: 'Bánh Trung Thu Nhân Thập Cẩm', quantity: 1, price: 300000, total: 300000 },
+                { name: 'Bánh Trung Thu Nhân Khoai Môn', quantity: 2, price: 275000, total: 550000 }
+              ]
+            },
+            { 
+              id: 'ORD-0127', 
+              customer: 'Lê Văn C', 
+              phone: '0987654321',
+              email: 'levanc@email.com',
+              address: '789 Đường DEF, Quận 5, TP.HCM',
+              total: 250000, 
+              status: 'shipping', 
+              date: '2023-10-21', // Ngày ở giữa
+              paymentMethod: 'Thanh toán khi nhận hàng (COD)',
+              products: [
+                { name: 'Bánh Trung Thu Nhân Đậu Xanh', quantity: 1, price: 250000, total: 250000 }
+              ]
+            },
+            { 
+              id: 'ORD-0128', 
+              customer: 'Phạm Thị D', 
+              phone: '0945678901',
+              email: 'phamthid@email.com',
+              address: '321 Đường GHI, Quận 10, TP.HCM',
+              total: 1800000, 
+              status: 'delivered', 
+              date: '2023-10-19', // Ngày cũ nhất
+              paymentMethod: 'Chuyển khoản (Vietcombank)',
+              products: [
+                { name: 'Bánh Trung Thu Nhân Hạt Sen', quantity: 4, price: 250000, total: 1000000 },
+                { name: 'Bánh Trung Thu Nhân Thập Cẩm', quantity: 2, price: 300000, total: 600000 },
+                { name: 'Bánh Trung Thu Nhân Khoai Môn', quantity: 1, price: 200000, total: 200000 }
+              ]
+            },
+            { 
+              id: 'ORD-0129', 
+              customer: 'Hoàng Văn E', 
+              phone: '0978123456',
+              email: 'hoangvane@email.com',
+              address: '654 Đường JKL, Quận Bình Thạnh, TP.HCM',
+              total: 950000, 
+              status: 'cancelled', 
+              date: '2023-10-22', // Ngày mới hơn
+              paymentMethod: 'Thanh toán khi nhận hàng (COD)',
+              products: [
+                { name: 'Bánh Trung Thu Nhân Đậu Đỏ', quantity: 2, price: 250000, total: 500000 },
+                { name: 'Bánh Trung Thu Nhân Đậu Xanh', quantity: 2, price: 225000, total: 450000 }
+              ]
+            }
+          ];
+          saveOrdersToStorage();
+        }
+        
+        // SẮP XẾP THEO LIFO (NGÀY MỚI NHẤT TRƯỚC)
+        orders.sort((a, b) => new Date(b.date) - new Date(a.date));
+      }
+
+      function saveOrdersToStorage() {
+        localStorage.setItem('orders', JSON.stringify(orders));
+      }
+
+      function updateOrderStatus(orderId, newStatus) {
+        const index = orders.findIndex(o => o.id === orderId);
+        if (index !== -1) {
+          orders[index].status = newStatus;
+          saveOrdersToStorage();
+          
+          // QUAN TRỌNG: Đồng bộ trạng thái với purchaseHistory
+          syncOrderStatusToPurchaseHistory(orderId, newStatus);
+          
+          applyFilters();
+          alert(`Đơn hàng ${orderId} đã được cập nhật trạng thái thành: ${statusMap[newStatus].text}`);
+        }
+      }
+
+      function syncOrderStatusToPurchaseHistory(orderId, newStatus) {
+        const purchaseHistory = JSON.parse(localStorage.getItem("purchaseHistory")) || [];
+        const orderIndex = purchaseHistory.findIndex(o => o.id === orderId);
+        if (orderIndex !== -1) {
+          purchaseHistory[orderIndex].status = newStatus;
+          localStorage.setItem("purchaseHistory", JSON.stringify(purchaseHistory));
+          console.log(`Đã đồng bộ trạng thái đơn hàng ${orderId} sang purchaseHistory: ${newStatus}`);
+        }
+      }
+
+      // === CÁC HÀM HIỂN THỊ ===
+      function renderOrders(ordersToRender) {
+        const tableBody = document.getElementById('order-list');
+        tableBody.innerHTML = '';
+        
+        if (ordersToRender.length === 0) {
+          tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted-brown)">Không có đơn hàng nào</td></tr>';
+          return;
+        }
+        
+        ordersToRender.forEach(order => {
+          const statusInfo = statusMap[order.status] || statusMap['pending'];
+          
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${order.id}</td>
+            <td>${order.customer}</td>
+            <td>${order.phone}</td>
+            <td style="font-weight:700">${order.total.toLocaleString('vi-VN')} VNĐ</td>
+            <td><span class="status-badge ${statusInfo.class}">${statusInfo.text}</span></td>
+            <td style="color:var(--muted-brown)">${formatDate(order.date)}</td>
+            <td>
+              <button class="btn-action btn-view" onclick="viewOrderDetails('${order.id}')">Chi tiết</button>
+              <button class="btn-action btn-update" onclick="promptUpdateStatus('${order.id}')">Cập nhật</button>
+            </td>
+          `;
+          tableBody.appendChild(row);
+        });
+      }
+      
+      function viewOrderDetails(orderId) {
+        const order = orders.find(o => o.id === orderId);
+        if (order) {
+          const statusInfo = statusMap[order.status];
+          
+          document.getElementById('detail-modal-title').textContent = `Chi tiết Đơn hàng #${order.id}`;
+          document.getElementById('modal-order-id').textContent = order.id;
+          document.getElementById('modal-order-date').textContent = formatDate(order.date);
+          document.getElementById('modal-status').innerHTML = `<span class="status-badge ${statusInfo.class}">${statusInfo.text}</span>`;
+          document.getElementById('modal-total').textContent = order.total.toLocaleString('vi-VN') + ' VNĐ';
+          document.getElementById('modal-payment').textContent = order.paymentMethod || 'Chưa có thông tin';
+          document.getElementById('modal-customer').textContent = order.customer;
+          document.getElementById('modal-phone').textContent = order.phone;
+          document.getElementById('modal-address').textContent = order.address;
+          document.getElementById('modal-email').textContent = order.email || 'Chưa có thông tin';
+          
+          // Hiển thị sản phẩm
+          const productsBody = document.getElementById('modal-products');
+          productsBody.innerHTML = '';
+          order.products.forEach(product => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${product.name}</td>
+              <td>${product.quantity}</td>
+              <td>${product.price.toLocaleString('vi-VN')} VNĐ</td>
+              <td>${product.total.toLocaleString('vi-VN')} VNĐ</td>
+            `;
+            productsBody.appendChild(row);
+          });
+          
+          document.getElementById('order-detail-modal').style.display = 'flex';
+        }
+      }
+
+      // === CÁC HÀM XỬ LÝ FILTER ===
+      function applyFilters() {
+        const statusFilter = document.getElementById('status-filter').value;
+        const startDate = document.getElementById('start-date').value;
+        const endDate = document.getElementById('end-date').value;
+        const searchTerm = document.getElementById('search-input').value.toLowerCase();
+        
+        // Lấy danh sách đã được sắp xếp LIFO làm cơ sở
+        let filteredOrders = orders.filter(order => {
+          // Lọc theo trạng thái
+          if (statusFilter !== 'all' && order.status !== statusFilter) {
+            return false;
+          }
+          
+          // Lọc theo khoảng thời gian
+          if (startDate && order.date < startDate) {
+            return false;
+          }
+          if (endDate && order.date > endDate) {
+            return false;
+          }
+          
+          // Lọc theo từ khóa tìm kiếm
+          if (searchTerm && !order.id.toLowerCase().includes(searchTerm) && 
+              !order.customer.toLowerCase().includes(searchTerm) &&
+              !order.phone.includes(searchTerm)) {
+            return false;
+          }
+          
+          return true;
+        });
+        
+        renderOrders(filteredOrders);
+      }
+      
+      function resetFilters() {
+        document.getElementById('status-filter').value = 'all';
+        document.getElementById('start-date').value = '';
+        document.getElementById('end-date').value = '';
+        document.getElementById('search-input').value = '';
+        // Hiển thị lại danh sách gốc (đã được sắp xếp LIFO)
+        renderOrders(orders);
+      }
+
+      // === CÁC HÀM TIỆN ÍCH ===
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('vi-VN');
+      }
+      
+      function promptUpdateStatus(orderId) {
+        const order = orders.find(o => o.id === orderId);
+        if (!order) return;
+        
+        const currentStatus = statusMap[order.status].text;
+        const newStatus = prompt(`Cập nhật trạng thái đơn hàng ${orderId}\nTrạng thái hiện tại: ${currentStatus}\n\nNhập trạng thái mới (pending/confirmed/shipping/delivered/cancelled):`);
+        
+        if (newStatus && statusMap[newStatus.toLowerCase()]) {
+          updateOrderStatus(orderId, newStatus.toLowerCase());
+        } else if (newStatus) {
+          alert("Trạng thái không hợp lệ! Vui lòng nhập: pending, confirmed, shipping, delivered hoặc cancelled");
+        }
+      }
+
+      function updateUserDisplay(username) {
+        document.getElementById('header-username').textContent = username;
+        
+        let role = 'Nhân viên';
+        if (username === 'admin') role = 'Quản trị viên';
+        else if (username === 'staff') role = 'Nhân viên bán hàng';
+        
+        document.getElementById('header-role').textContent = role;
+      }
+
+      function setupModalListeners() {
+        const modal = document.getElementById('order-detail-modal');
+        document.querySelector('#order-detail-modal .close-btn').addEventListener('click', () => modal.style.display = 'none');
+        window.addEventListener('click', (event) => { 
+          if (event.target == modal) modal.style.display = 'none'; 
+        });
+      }
+
+      // === KHỞI TẠO TRANG ===
+      document.addEventListener('DOMContentLoaded', function() {
+        // Kiểm tra đăng nhập
+        const currentUser = localStorage.getItem('loggedInUser');
+        if (!currentUser) {
+          window.location.href = '../login/admin-login.html';
+          return;
+        }
+
+        // Tải dữ liệu đơn hàng TỪ localStorage (và sắp xếp LIFO)
+        loadOrdersFromStorage();
+
+        // Cập nhật tên người dùng
+        updateUserDisplay(currentUser);
+
+        // Xử lý đăng xuất
+        document.getElementById('logout-btn').addEventListener('click', function() {
+          localStorage.removeItem('loggedInUser');
+          window.location.href = '../login/admin-login.html';
+        });
+
+        // Gắn sự kiện cho bộ lọc
+        document.getElementById('apply-filter').addEventListener('click', applyFilters);
+        document.getElementById('reset-filter').addEventListener('click', resetFilters);
+        
+        // DÒNG NÀY ĐÃ BỊ VÔ HIỆU HÓA ĐỂ BỘ LỌC CHỈ CHẠY KHI NHẤN "ÁP DỤNG"
+        // document.getElementById('search-input').addEventListener('input', applyFilters);
+
+        // Gắn sự kiện cho modal
+        setupModalListeners();
+
+        // Hiển thị danh sách đơn hàng (đã được sắp xếp LIFO)
+        renderOrders(orders);
+      });
+    </script>
+  </body>
+</html>
