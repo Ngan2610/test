@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng nhập - Morico Bakery</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      font-family: "Century", serif;
+      background: linear-gradient(to right,#FFF4C2, #FFF4C2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      display: flex;
+      width: 850px;
+      height: 520px;
+      background-color: #FFF4C2;
+      border-radius: 20px;
+      box-shadow: 0 5px 18px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      border: 2px solid #8B0000;
+    }
+
+    .image-section {
+      width: 50%;
+      background-color: #fff3b0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .image-section img {
+      width: 90%;
+      height: auto;
+    }
+
+    .login-section {
+      width: 50%;
+      padding: 50px;
+      box-sizing: border-box;
+      color: #8B0000;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 15px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #8B0000;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      border: 1.5px solid #8B0000;
+      border-radius: 8px;
+      font-size: 17px;
+      background-color: #FFFCEE;
+      color: #8B0000;
+      box-sizing: border-box;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #B22222;
+      background-color: #FFF8B5;
+    }
+
+    .options {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      font-size: 15px;
+      margin: 10px 0 10px 0;
+    }
+
+    .options label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      font-weight: normal;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #8B0000;
+      color: #FFFBD1;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 20px;
+      transition: 0.3s;
+      box-shadow: 0 3px 8px rgba(139, 0, 0, 0.3);
+    }
+
+    .btn:hover {
+      background-color: #B22222;
+      transform: scale(1.05);
+    }
+
+    .link {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 17px;
+      color: #8B0000;
+    }
+
+    .link a {
+      color: #8B0000;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .link a:hover {
+      text-decoration: underline;
+      color: #B22222;
+    }
+
+    .error {
+      color: #B22222;
+      font-size: 16px;
+      text-align: center;
+      height: 20px;
+      margin: 10px 0 10px 0;
+    }
+
+    /* Demo account info */
+    .demo-account {
+      background-color: #FFF8B5;
+      border: 1px dashed #8B0000;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #5D4037;
+    }
+
+    .demo-account h3 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      color: #8B0000;
+    }
+
+    .demo-account p {
+      margin: 4px 0;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 40px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .modal-icon {
+      font-size: 48px;
+      color: #8B0000;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #8B0000;
+      margin-bottom: 15px;
+    }
+
+    .modal-message {
+      font-size: 16px;
+      color: #5D4037;
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    .modal-ok-btn {
+      background-color: #8B0000;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .modal-ok-btn:hover {
+      background-color: #B22222;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="image-section">
+      <img src="../assets/image/login/logo.png" alt="Login Illustration" />
+    </div>
+
+    <div class="login-section">
+      <h2>Đăng nhập</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username">Tên đăng nhập</label>
+          <input type="text" id="username" placeholder="Tên đăng nhập">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
+          <input type="password" id="password" placeholder="Nhập mật khẩu">
+        </div>
+
+        <div class="options">
+          <label><input type="checkbox"> Ghi nhớ đăng nhập</label>
+        </div>
+
+        <div id="errorMsg" class="error"></div>
+        <button type="submit" class="btn">Đăng nhập</button>
+      </form>
+
+      <div class="link">
+        Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="lockedAccountModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-icon">🚫</div>
+      <div class="modal-title">Tài khoản đã bị khóa</div>
+      <div class="modal-message">
+        Tài khoản của bạn đã bị vô hiệu hóa. Nếu bạn có bất kỳ thắc mắc hay quan tâm nào, 
+        bạn có thể liên hệ 0909 123 456 để được hỗ trợ.
+      </div>
+      <button class="modal-ok-btn" id="modalOkBtn">OK</button>
+    </div>
+  </div>
+
+  <script>
+    // Khởi tạo dữ liệu mẫu nếu chưa có
+    function initializeSampleData() {
+      // Kiểm tra xem đã có dữ liệu người dùng trong localStorage chưa
+      if (!localStorage.getItem("users")) {
+        // Tạo mảng người dùng mẫu
+        const sampleUsers = [
+          {
+            id: 1,
+            username: "khachhang1",
+            password: "123456",
+            fullName: "Khách hàng",
+            email: "khachhang1@example.com",
+            phone: "0909123456",
+            status: "active",
+            role: "customer",
+            createdAt: new Date().toISOString()
+          }, 
+        ];
+        
+        // Lưu vào localStorage
+        localStorage.setItem("users", JSON.stringify(sampleUsers));
+      }
+    }
+
+    // Gọi hàm khởi tạo dữ liệu mẫu
+    initializeSampleData();
+
+    const form = document.getElementById("loginForm");
+    const errorMsg = document.getElementById("errorMsg");
+    const lockedAccountModal = document.getElementById("lockedAccountModal");
+    const modalOkBtn = document.getElementById("modalOkBtn");
+
+    // Xử lý đăng nhập
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const usernameInput = document.getElementById("username").value.trim();
+      const passwordInput = document.getElementById("password").value.trim();
+
+      // Lấy danh sách users từ Local Storage
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+
+      if (!usernameInput || !passwordInput) {
+        errorMsg.textContent = "Vui lòng nhập đầy đủ thông tin.";
+        return;
+      }
+
+      if (users.length === 0) {
+        errorMsg.textContent = "Không tìm thấy tài khoản. Vui lòng đăng ký.";
+        return;
+      }
+
+      // Tìm user trong mảng users
+      const user = users.find(u => u.username === usernameInput && u.password === passwordInput);
+
+      if (user) {
+        // Kiểm tra tài khoản có bị khóa không
+        if (user.status === "locked") {
+          // Hiển thị modal thông báo tài khoản bị khóa
+          lockedAccountModal.style.display = "flex";
+          return;
+        }
+        
+        errorMsg.textContent = "";
+        
+        // Lưu thông tin user đang đăng nhập
+        localStorage.setItem("currentUser", JSON.stringify(user));
+        
+        // Hiển thị thông báo đăng nhập thành công
+        alert(`Đăng nhập thành công! Chào mừng b đến với Morico Bakery.`);
+        
+        // Chuyển hướng đến trang chính
+        window.location.href = "../index.html";
+      } else {
+        errorMsg.textContent = "Tên đăng nhập hoặc mật khẩu không đúng.";
+      }
+    });
+
+    // Xử lý nút OK trong modal
+    modalOkBtn.addEventListener("click", () => {
+      lockedAccountModal.style.display = "none";
+    });
+
+    // Đóng modal khi click bên ngoài
+    window.addEventListener("click", (e) => {
+      if (e.target === lockedAccountModal) {
+        lockedAccountModal.style.display = "none";
+      }
+    });
+
+    // Kiểm tra nếu đã có user đăng nhập thì chuyển hướng luôn
+    window.addEventListener('DOMContentLoaded', () => {
+      const currentUser = localStorage.getItem("currentUser");
+      if (currentUser) {
+        // Nếu muốn tự động đăng nhập lại, có thể chuyển hướng ở đây
+        // window.location.href = "../index.html";
+      }
+    });
+  </script>
+
+</body>
+</html>
